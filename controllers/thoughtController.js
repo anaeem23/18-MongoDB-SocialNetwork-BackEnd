@@ -15,7 +15,7 @@ module.exports = {
       )
       .catch((err) => res.status(500).json(err));
   },
-  // create a new video
+  // create a new thought
   createThought(req, res) {
     Thought.create(req.body)
       .then((t) => {
@@ -74,7 +74,7 @@ module.exports = {
       .catch((err) => res.status(500).json(err));
   },
   // Add a thought response
-  addThoughtResponse(req, res) {
+  addThoughtReaction(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
       { $addToSet: { reactions: req.body } },
@@ -88,7 +88,7 @@ module.exports = {
       .catch((err) => res.status(500).json(err));
   },
   // Remove thought response
-  removeThoughtResponse(req, res) {
+  removeThoughtReaction(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
       { $pull: { reactions: { reactionId: req.params.reactionId } } },
