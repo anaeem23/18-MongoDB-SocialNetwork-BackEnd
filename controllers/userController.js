@@ -22,4 +22,46 @@ module.exports = {
       .then((dbUserData) => res.json(dbUserData))
       .catch((err) => res.status(500).json(err));
   },
+
+  // update a user
+  updateUser(req,res) {
+    User.findOneAndUpdate(
+      {id: req.params.userId},
+      {$set:req.body},
+    )
+    .then((user) =>res.json(user))
+    .catch((err) => res.status(500).json(err))
+  },
+
+  //delete a user
+  deleteUser(req,res) {
+    User.findOneAndRemove(
+      
+      {id: req.params.userId},
+    )
+    .then((user) =>res.json(user))
+    .catch((err) => res.status(500).json(err))
+  },
+
+  //Add a friend
+  addFriend(req,res) {
+    User.findOneAndUpdate(
+      {id: req.params.userId},
+      {$addToSet:{friends:req.params.friendId}},
+    )
+    .then((user) =>res.json(user))
+    .catch((err) => res.status(500).json(err))
+  },
+
+  //remove a Friend
+
+  removeFirend(req,res) {
+    User.findOneAndUpdate(
+      {id: req.params.userId},
+      {$pull:{friends:req.params.friendId}},
+    )
+    .then((user) =>res.json(user))
+    .catch((err) => res.status(500).json(err))
+  }
+
 };
