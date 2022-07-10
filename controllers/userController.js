@@ -1,4 +1,5 @@
-const User = require('../models/User');
+const {User,Thought} = require('../models');
+
 
 module.exports = {
   getUsers(req, res) {
@@ -9,6 +10,14 @@ module.exports = {
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.userId })
       .select('-__v')
+      .populate({
+        path: 'thoughts',
+        model: Thought,
+      })
+      .populate({
+        path: 'friends',
+        model: User,
+      })
       .then((user) =>
         !user
           ? res.status(404).json({ message: 'No user with that ID' })
@@ -26,7 +35,7 @@ module.exports = {
   // update a user
   updateUser(req,res) {
     User.findOneAndUpdate(
-      {id: req.params.userId},
+      {_id: req.params.userId},
       {$set:req.body},
     )
     .then((user) =>res.json(user))
@@ -37,7 +46,7 @@ module.exports = {
   deleteUser(req,res) {
     User.findOneAndRemove(
       
-      {id: req.params.userId},
+      {_id: req.params.userId},
     )
     .then((user) =>res.json(user))
     .catch((err) => res.status(500).json(err))
@@ -46,7 +55,7 @@ module.exports = {
   //Add a friend
   addFriend(req,res) {
     User.findOneAndUpdate(
-      {id: req.params.userId},
+      {_id: req.params.userId},
       {$addToSet:{friends:req.params.friendId}},
     )
     .then((user) =>res.json(user))
@@ -57,7 +66,7 @@ module.exports = {
 
   removeFriend(req,res) {
     User.findOneAndUpdate(
-      {id: req.params.userId},
+      {_id: req.params.userId},
       {$pull:{friends:req.params.friendId}},
     )
     .then((user) =>res.json(user))

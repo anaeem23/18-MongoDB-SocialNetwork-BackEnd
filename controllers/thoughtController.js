@@ -1,10 +1,12 @@
-const { Thought, User } = require('../models');
+const { User, Thought } = require('../models');
 
 module.exports = {
   getThought(req, res) {
     Thought.find()
       .then((t) => res.json(t))
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => {
+        console.log(err)
+        res.status(500).json(err)});
   },
   getSingleThought(req, res) {
     Thought.findOne({ _id: req.params.thoughtId })
@@ -19,9 +21,10 @@ module.exports = {
   createThought(req, res) {
     Thought.create(req.body)
       .then((t) => {
+        console.log(t)
         return User.findOneAndUpdate(
           { _id: req.body.userId },
-          { $addToSet: { thoughts: thought._id } },
+          { $addToSet: {thoughts: t._id } },
           { new: true }
         );
       })
@@ -46,7 +49,7 @@ module.exports = {
       .then((t) =>
         !t
           ? res.status(404).json({ message: 'No thought with this id!' })
-          : res.json(thought)
+          : res.json(t)
       )
       .catch((err) => {
         console.log(err);
@@ -89,6 +92,7 @@ module.exports = {
   },
   // Remove thought response
   removeThoughtReaction(req, res) {
+    console.log(req)
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
       { $pull: { reactions: { reactionId: req.params.reactionId } } },
